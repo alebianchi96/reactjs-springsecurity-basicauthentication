@@ -16,9 +16,9 @@ function App() {
       <div>
         TODO:
         <ul>
-          <li>Crea interazione crud per utenti via basic authentication</li>
-          <li>Scrivi readme dettagliato su funzionamento</li>
-          <li>Refactoring del codice BE e FE</li>
+          <li>Rendi consultabili risultati chiamata da interfaccia, senza aprire la console</li>
+          <li>Crea altro ms springboot senza autenticazione e rendi possibile la comunicazione</li>
+          <li>Crea altro ms springboot con autenticazione token jwt</li>
         </ul>
       </div>
     </>
