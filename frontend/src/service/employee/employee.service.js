@@ -14,6 +14,7 @@ async function listEmployees() {
         .get(base_url + "api/employees", custom_headers)
     ).data;
     console.log("list_response", res);
+    return res;
 }
 
 async function addEmployee() { console.log("-> add"); }
