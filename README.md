@@ -11,103 +11,80 @@
 </div>
 
 <div align="center">
-  <h3 align="center">springboot and react application secured by basic authentication</h3>
-
-  <p align="center">
-    Esempio di applicazione web avente Frontend React.js e Backend Springboot.
-      <br>
-    Una basic authentication implementata con Spring Security protegge i servizi di Backend.
+  <h3 align="center">Spring Boot and React Application Secured by Basic Authentication</h3>
 </div>
+
+## Overview
+This project demonstrates a web application featuring a React.js frontend and a Spring Boot backend secured with basic authentication using Spring Security.
 
 <br>
 <br>
 
 ## Getting Started & Development
-Per agevolare l'installazione, il progetto è stato organizzato all'interno di un Docker Compose che include tre componenti principali:
+To simplify installation, the project is organized within a Docker Compose setup, which includes three main components:
 
-- fe-react, accessibile sulla porta :80
-- be-springboot, raggiungibile sulla porta :8080
-- db-employee (postgres), raggiungibile sulla porta :5435
+- **fe-react**: accessible on port 80
+- **be-springboot**: accessible on port 8080
+- **db-employee (PostgreSQL)**: accessible on port 5435
 
-Per semplificare la pipeline di build e deploy è stato creato uno script denominato <code>deploy-all.sh</code>. 
-Questo script gestisce tutte le fasi necessarie, tenendo conto delle preferenze dell'utente:
-- Effettua il down dell'attuale istanza del compose.
-- Richiede all'utente se necessario procedere ad una nuova build del Backend:
-   <br>Sì: effettua la maven build del progetto e rimuove la vecchia immagine docker affinchè venga sostituita con la nuova.
-- Richiede all'utente se necessario procedere ad una nuova build del Frontend:
-   <br>Sì: effettua la npm build del progetto e rimuove la vecchia immagine docker affinchè venga sostituita con la nuova.
-- Lancia una nuova istanza del compose (se non già presente, ogni immagine viene buildata nuovamente).
+A script named <code>deploy-all.sh</code> is provided to streamline the build and deployment process. This script handles all necessary steps, accommodating user preferences:
+- Shuts down the current Docker Compose instance.
+- Prompts the user to rebuild the backend:
+   <br>If yes, performs a Maven build of the project and removes the old Docker image to replace it with the new one.
+- Prompts the user to rebuild the frontend:
+   <br>If yes, performs an npm build of the project and removes the old Docker image to replace it with the new one.
+- Launches a new Docker Compose instance (if not already present, each image will be rebuilt).
 
-Instruzione per il lancio: <code>sh deploy-all.sh</code>
+To execute the script, run: <code>sh deploy-all.sh</code>
 
-Durante le operazioni di sviluppo del frontend, è consigliabile mantenere l'intero progetto in esecuzione su Docker al fine di poter sfruttare l'instradamento verso le API di backend fornito dall'NGINX.
+During frontend development, it is recommended to keep the entire project running on Docker to leverage the routing to backend APIs provided by NGINX. The application running in development mode (<code>localhost:3000</code>) will point to NGINX on Docker via the "proxy" attribute set in the **package.json** file.
 
-L'applicazione avviata in modalità sviluppo (<code>localhost:3000</code>) punterà l'Nginx in esecuzione su Docker grazie all'attributo "proxy" impostato nel suo package.json.
-
-Per avviare il Frontend in modalità di sviluppo, esegui il seguente comando: <code>cd fe-react && npm run start</code>
+To start the frontend in development mode, run the command: <code>cd fe-react && npm run start</code>.
 
 <br><br>
 
 ## Components
-Di seguito la descrizione di funzionamento delle 3 componenti:
+The project consists of the following main components:
 <br>
 
 ### db-employee
-tabelle: <br>
-- employees: raccoglie le informazioni degli impiegati censiti nell'applicazione.
-- users: raccoglie le informazioni degli utenti censiti nell'applicazione.
+
+- **employees**: stores information about the employees.
+- **users**: stores information about the users.
 <br><br>
 
 ### be-springboot
-classi: <br>
-- SecurityexampleApplication.java: entry point dell'applicazione.<br>
-   Al fine di rendere indipendente ogni test, al suo interno è stato codificato il comportamento previsto in sede di avvio: <br>
-   - Censimento dell'utente di default <code>{ username:'ale', password:'ale' }</code>; <br>
-   - Censimento di alcuni impiegati di prova</code> - tale procedura si combina con la rigenerazione del database per effetto della property <code>spring.jpa.hibernate.ddl-auto=create-drop</code>;
+
+- **SecurityexampleApplication.java**: the entry point of the application. At startup, it registers a default user (username: 'ale', password: 'ale') and some sample employees, combining this procedure with database regeneration (<code>spring.jpa.hibernate.ddl-auto=create-drop</code>).
 <br><br>
 
-- SecurityConfig.java: configurazione delle politiche di autenticazione.<br>
-   Attraverso questa classe vengono definite le politiche di autenticazione necessarie per l'accesso alle API esposte:<br>
-   - tipologia: basic;<br>
-   - service per logiche di controllo: UserDetailsService.java;<br>
-   - APIs non coperte da autenticazione: <code>/register</code>
-   - IP da cui sono consentite chiamate: <code>frontend.security.host</code>
+- **SecurityConfig.java**: configures the authentication policies required to access the exposed APIs.
+  - Authentication type: basic;<br>
+  - Service for control logic: **UserDetailsService.java**;<br>
+  - APIs not covered by authentication: <code>/register</code>; <br>
+  - Allowed IPs: <code>frontend.security.host</code>
 <br><br>
 
-- UserService.java: logiche per l'autenticazione.<br>
-   Classe che implementa UserDetailsService.java definendo la procedura di controllo delle credenziali immesse dall'utente:
-   - metodo: loadUserByUsername;<br>
-   - oggetto: UserPrincipalDTO.java;
+- **UserService.java**: implements **UserDetailsService.java**, defining the procedure for verifying user credentials ("**loadUserByUsername**").
 <br><br>
 
-- UserPrincipalDTO.java: oggetto per la trasmissione dei dati utili all'autenticazione.<br>
-   E' l'implementazione di UserDetails.java, ovvero l'oggetto usato da Spring Security per la trasmissione dei dati utente.
+- **UserPrincipalDTO.java**: implementation of **UserDetails.java**, used by Spring Security to transmit user data.
 <br><br>
 
-- UserPasswordEncoder.java: configurazione delle politiche di crittografia previste per la password utente.<br>
+- **UserPasswordEncoder.java**: configures password encryption policies.
 
 <br><br>
 
 ### fe-react
-componenti e configurazioni: <br>
-- default.conf: configurazione NGINX con policy di redirect.<br>
-   ogni chiamata effettuata dal Frontend dovrà essere reindirizzata come di seguito:
-    - <code>localhost:3000/be-spring-security/*</code> ---> <code>be-spring-security:8080/</code> (L'IP effettivo corrispondente al container "be-spring-security" verrà recuperato in modo automatico attraverso docker). <br>
-  
 
-- user.service.js<br>
-    il metodo "registerUser" effettua la chiamata al Backend per la registrazione di un nuovo utente.
-     <br>Questa API non è coperta da autenticazione
+- **default.conf**: NGINX configuration with redirect policies. All calls from the frontend will be redirected as follows:
+   - <code>localhost:3000/be-spring-security/*</code> ---> <code>be-spring-security:8080/</code>. <br>  
 
-- employee.service.js<br>
-  il metodo "listEmployees" effettua la chiamata al Backend al fine di ottenere la lista degli impiegati censiti.
-  <br>Questa API è coperta da autenticazione, pertanto necessita l'header <code>Authorization</code> composta dal metodo "get_basic_authentication_header" di "authentication.service.js"
+- **user.service.js**: the "**registerUser**" method calls the backend to register a new user (API not protected by authentication).
 
-- authentication.service.js<br>
-  il metodo "get_basic_authentication_header" compone la header <code>Authorization</code> necessaria alla basic authentication implementata nel Backend.
-  <br>Il "value" di questa header si compone di:
-  - prefisso: "Basic ";
-  - token: base64 del json <code>{ username:'ale', password:'ale' }</code>;
+- **employee.service.js**: the "**listEmployees**" method calls the backend to get the list of employees (API protected by authentication, requires the "Authorization" header generated by **authentication.service.js**).
+
+- **authentication.service.js**: the "**get_basic_authentication_header**" method composes the "Authorization" header required for basic authentication in the backend. The value of this header consists of the prefix "Basic " followed by the base64 token of <code>{ username: 'ale', password: 'ale' }</code>.
   
 <br><br>
 
