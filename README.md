@@ -49,7 +49,7 @@ $ sh deploy-all.sh
 ## ⌨️ Local development
 Clone the repository:
 ```bash
-$ git clone
+$ git clone https://github.com/alebianchi96/reactjs-springsecurity-basicauthentication.git
 $ cd fe-react
 $ npm install
 $ cd ..
