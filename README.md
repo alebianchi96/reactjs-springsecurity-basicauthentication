@@ -57,7 +57,11 @@ $ cd ..
 
 During frontend development, it is recommended to keep the entire project running on Docker to leverage the routing to backend APIs provided by NGINX. The application running in development mode (<code>localhost:3000</code>) will point to NGINX on Docker via the "proxy" attribute set in the **package.json** file.
 
-To start the frontend in development mode, run the command: <code>cd fe-react && npm run start</code>.
+To start the frontend in development mode, run the command: 
+```bash
+$ cd fe-react
+$ npm run start
+```
 
 <br>
 
@@ -126,6 +130,5 @@ name: **fe-react**
 [Docker-url]: https://w7.pngwing.com/pngs/219/411/png-transparent-docker-logo-kubernetes-microservices-cloud-computing-dockers-logo-text-logo-cloud-computing.png
 [Postgres.bdg]: https://img.shields.io/badge/Postgres-20232A?style=for-the-badge&logo=postgresql&logoColor=61DAFB
 [Postgres-url]: https://www.postgresql.org/
-
 [Bash.bdg]: https://img.shields.io/badge/Bash-20232A?style=for-the-badge&logo=gnubash&logoColor=D3D3D3
 [Bash-url]: https://www.gnu.org/software/bash/
